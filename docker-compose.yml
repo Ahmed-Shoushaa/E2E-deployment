@@ -2,7 +2,7 @@ version: '3'
 
 services:
   db:
-    build: ./db
+    image: shoushaa/flask-db
     ports:
       - "30001:3306"
 
@@ -13,7 +13,7 @@ services:
       - 8080:8080
 
   app:
-    build: ./app
+    image: shoushaa/flask-app
     ports:
       - "5000:5000"
     links:
