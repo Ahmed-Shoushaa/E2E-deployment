@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  selector:
+    app: mysql
+  ports:
+  - protocol: TCP
+    port: 3306
+    targetPort: 3306
+  type: ClusterIP
+  clusterIP: None # headless service
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  serviceName: db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain 
+    whenScaled: Retain
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      terminationGracePeriodSeconds: 30
+      hostname: db
+      # securityContext:
+      #   fsGroup: 10001
+      containers:
+      - name: mysql
+        image: shoushaa/flask-db
+        ports:
+        - containerPort: 3306
+        # env:
+        # - name: MYSQL_DATABASE_PASSWORD
+        #   value: "root"
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: standard #for minikube
