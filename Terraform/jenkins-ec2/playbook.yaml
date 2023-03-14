@@ -1,0 +1,47 @@
+---
+- name: Install jenkins
+  hosts: all
+  become: yes
+  remote_user: ec2-user
+  tasks:
+  - name: install java
+    shell: sudo amazon-linux-extras install java-openjdk11 -y 
+    args:
+      creates: /usr/bin/java
+
+  - name: yum update
+    yum:
+      name: '*'
+      state: latest
+
+  - name: Download Long Term Jenkins release
+    get_url:
+      url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+      dest: /etc/yum.repos.d/jenkins.repo
+
+  - name: Import jenkins key from url
+    ansible.builtin.rpm_key:
+      state: present
+      key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+  - name: Install jenkins
+    yum:
+      name: jenkins
+      state: latest
+
+  - name: Start jenkins
+    ansible.builtin.systemd:
+      name: jenkins
+      state: started
+
+  # - name: Jenkins Skip Wizard login for MI
+  #   lineinfile:
+  #     dest=/etc/sysconfig/jenkins
+  #     regexp='^JENKINS_JAVA_OPTIONS='
+  #     line='JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+  #   register: result_skip_startup_wizard
+
+  # - name: Install build-pipeline
+  #   jenkins_plugin:
+  #     name: build-pipeline-plugin
+
