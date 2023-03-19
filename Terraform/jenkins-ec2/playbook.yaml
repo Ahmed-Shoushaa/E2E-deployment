@@ -1,7 +1,7 @@
 ---
 - name: Install jenkins
   hosts: all
-  become: yes
+  become: true
   remote_user: ec2-user
   tasks:
   - name: install java
@@ -13,6 +13,7 @@
     yum:
       name: '*'
       state: latest
+      lock_timeout: 180
 
   - name: Download Long Term Jenkins release
     get_url:
@@ -29,19 +30,27 @@
       name: jenkins
       state: latest
 
+  - name: Jenkins Skip Wizard login for MI
+    lineinfile:
+      dest=/etc/sysconfig/jenkins
+      regexp=^JAVA_ARGS=
+      line='JAVA_ARGS="-Djenkins.install.runSetupWizard=false"'
+    become: true
+
+  - name: Create initialization scripts directory
+    file: path=/var/lib/jenkins/init.groovy.d
+          state=directory
+          owner=jenkins
+          group=jenkins
+          mode=0775
+
+  - name: Add initialization script to setup basic security
+    template: src=basic-security.groovy
+              dest=/var/lib/jenkins/init.groovy.d/security.groovy
+
   - name: Start jenkins
     ansible.builtin.systemd:
       name: jenkins
       state: started
-
-  # - name: Jenkins Skip Wizard login for MI
-  #   lineinfile:
-  #     dest=/etc/sysconfig/jenkins
-  #     regexp='^JENKINS_JAVA_OPTIONS='
-  #     line='JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
-  #   register: result_skip_startup_wizard
-
-  # - name: Install build-pipeline
-  #   jenkins_plugin:
-  #     name: build-pipeline-plugin
-
+    async: 200
+    ignore_errors: yes
