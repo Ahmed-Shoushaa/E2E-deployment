@@ -6,23 +6,20 @@ resource "aws_default_vpc" "default-vpc" {
 
 resource "aws_default_subnet" "default_az1" {
   availability_zone = "us-east-1a"
-
   tags = {
     Name = "Default subnet for us-east-1a"
   }
 }
 
-
 resource "aws_network_interface" "ni-default" {
   subnet_id       = aws_default_subnet.default_az1.id
-  security_groups = [aws_security_group.allow_web.id]
+  security_groups = [aws_security_group.allow-jenkins.id]
 }
 
-resource "aws_security_group" "allow_web" {
+resource "aws_security_group" "allow-jenkins" {
   name        = "allow_web_traffic"
   description = "Allow Web traffic"
   vpc_id      = aws_default_vpc.default-vpc.id
-
   ingress {
     description = "HTTPS"
     from_port   = 443
@@ -30,7 +27,6 @@ resource "aws_security_group" "allow_web" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   ingress {
     description = "HTTP"
     from_port   = 80
@@ -45,7 +41,6 @@ resource "aws_security_group" "allow_web" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   ingress {
     description = "SSH"
     from_port   = 22
@@ -53,7 +48,6 @@ resource "aws_security_group" "allow_web" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   egress {
     from_port        = 0
     to_port          = 0
@@ -63,7 +57,7 @@ resource "aws_security_group" "allow_web" {
   }
 
   tags = {
-    Name = "allow_web"
+    Name = "allow-jenkins"
   }
 }
 
