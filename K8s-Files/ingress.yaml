@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress
+  namespace: ingress-nginx
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
@@ -9,9 +10,10 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
+  #- hosts:  
   - http:
       paths:
-      - path: /hello-world-one(/|$)(.*)
+      - path: "/"
         pathType: Prefix
         backend:
           service:
