@@ -23,6 +23,7 @@ spec:
         image: shoushaa/flask-app
         ports:
         - containerPort: 5000
+
         resources:
           limits:
             cpu: 300m
@@ -30,6 +31,28 @@ spec:
           requests:
             cpu: 100m
             memory: "50Mi"
+        
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 10    
+        
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        
+        startupProbe:
+          httpGet:
+            path: /
+            port: 5000
+          failureThreshold: 30
+          periodSeconds: 10
+        
         env:
         - name: MYSQL_DATABASE_PASSWORD
           value: "root"
