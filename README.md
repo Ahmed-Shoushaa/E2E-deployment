@@ -1,4 +1,11 @@
-o Folders Contents
+# E2E Deployment of Flask application
+Deploying a flask application with MYSQL database to EKS Cluster using multiple tool and going through multiple steps 
+- AWS Services
+- Terraform integrated with Ansible
+- Docker
+- Kubernetes
+- Jenkins
+## GitHub Repo Folders Contents
 #### Terraform
 contains there main folders
 - EKS: creates EKS cluster with 2 nodes
