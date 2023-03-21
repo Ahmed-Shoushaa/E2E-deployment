@@ -17,13 +17,13 @@
 
   - name: Download Long Term Jenkins release
     get_url:
-      url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+      url: https://pkg.jenkins.io/redhat/jenkins.repo
       dest: /etc/yum.repos.d/jenkins.repo
 
   - name: Import jenkins key from url
-    ansible.builtin.rpm_key:
+    rpm_key:
       state: present
-      key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+      key: https://pkg.jenkins.io/redhat/jenkins.io.key
 
   - name: Install jenkins
     yum:
@@ -48,9 +48,71 @@
     template: src=basic-security.groovy
               dest=/var/lib/jenkins/init.groovy.d/security.groovy
 
+  - name: Enable jenkins
+    systemd:
+      name: jenkins
+      enabled: yes
+      masked: no
+
   - name: Start jenkins
-    ansible.builtin.systemd:
+    systemd:
       name: jenkins
       state: started
     async: 200
     ignore_errors: yes
+
+  - name: download plugin installation manager jar 
+    get_url:
+      url: https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/2.12.11/jenkins-plugin-manager-2.12.11.jar
+      dest: /home/ec2-user
+
+  - name: Creating list of plugins file
+    copy:
+      dest: /home/ec2-user/plugins.txt
+      content: |
+        ant:latest
+        antisamy-markup-formatter:latest
+        build-timeout:latest
+        cloudbees-folder:latest
+        configuration-as-code:latest
+        credentials-binding:latest
+        email-ext:latest
+        git:latest
+        github-branch-source:latest
+        gradle:latest
+        ldap:latest
+        mailer:latest
+        matrix-auth:latest
+        pam-auth:latest
+        pipeline-github-lib:latest
+        pipeline-stage-view:latest
+        ssh-slaves:latest
+        timestamper:latest
+        workflow-aggregator:latest
+        ws-cleanup:latest
+        job-dsl:latest
+        blueocean:latest
+        authorize-project:latest
+        docker-commons:latest
+        docker-workflow:latest
+        aws-credentials:latest
+        aws-java-sdk-ec2:latest
+        aws-java-sdk-minimal:latest
+        amazon-ecr:latest
+
+  - name: install plugins to jenkins
+    shell: java -jar jenkins-plugin-manager-*.jar --war /usr/share/java/jenkins.war --plugin-file /home/ec2-user/plugins.txt --plugins delivery-pipeline-plugin:1.3.2 deployit-plugin -d plug 
+
+  - name: Copy a plug file to /var/lib/jenkins/plugins/
+    copy:
+      src: /home/ec2-user/plug/
+      dest: /var/lib/jenkins/plugins
+      remote_src: yes 
+    become: true
+
+  - name: Restart jenkins
+    systemd:
+      name: jenkins
+      state: restarted
+    async: 200
+    ignore_errors: true
