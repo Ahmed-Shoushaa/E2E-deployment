@@ -1,16 +1,13 @@
 locals {
-  key_name        = "jenkins-ansible"
-  private_key_path = "jenkins-ec2/jenkins-ansible.pem"
+  key_name         = "ohio"
+  private_key_path = "jenkins-ec2/ohio.pem"
 }
-
 resource "aws_instance" "jenkins-ec2" {
-  ami           = "ami-005f9685cb30f234b" # amazon linux
-  instance_type = "t2.small"
-  key_name      = local.key_name
-  network_interface {
-    network_interface_id = aws_network_interface.ni-default.id
-    device_index         = 0
-  }
+  ami                         = "ami-02238ac43d6385ab3"
+  instance_type               = "t2.medium"
+  vpc_security_group_ids      = [aws_security_group.jenkins_sg.id]
+  associate_public_ip_address = true
+  key_name                    = "ohio" # your key here
   provisioner "remote-exec" {
 
     inline = ["echo 'wait untill SSH is ready'"]
@@ -25,9 +22,8 @@ resource "aws_instance" "jenkins-ec2" {
     command = "ansible-playbook -i ${aws_instance.jenkins-ec2.public_ip}, --private-key ${local.private_key_path} jenkins-ec2/playbook.yaml"
   }
 
-  user_data     = <<EOF
+  user_data = <<EOF
                   #!/bin/bash
-
                   # install git
                   sudo yum install git -y
 
@@ -46,13 +42,13 @@ resource "aws_instance" "jenkins-ec2" {
                   sudo yum install python3-pip -y
                   sudo pip3 install docker-compose
                   EOF
+
   tags = {
-    Name = "jenkins-ec2"
+    Name = "Jenkins-EC2"
   }
+
 }
 
-output "instance-ip" {
-  value       = aws_instance.jenkins-ec2.public_ip
+output "instance_ip" {
+  value = aws_instance.jenkins-ec2.public_ip
 }
-
-
