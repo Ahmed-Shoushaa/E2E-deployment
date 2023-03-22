@@ -9,3 +9,7 @@ module "jenkins-ec2" {
 module "EKS" {
     source= "./EKS"
 }
+
+output "Jenkins server ip"{
+    value = module.jenkins-ec2.jenkins-server-ip
+}

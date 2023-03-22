@@ -49,6 +49,6 @@ resource "aws_instance" "jenkins-ec2" {
 
 }
 
-output "instance_ip" {
+output "jenkins-server-ip" {
   value = aws_instance.jenkins-ec2.public_ip
 }
