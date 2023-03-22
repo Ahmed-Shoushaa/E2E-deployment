@@ -15,3 +15,11 @@ resource "aws_ecr_repository" "ecr-db" {
     scan_on_push = true
   }
 }
+
+output "app-repo-url"{
+  value = aws_ecr_repository.ecr-app.repository_url
+}
+
+output "db-repo-url"{
+  value = aws_ecr_repository.ecr-db.repository_url
+}
