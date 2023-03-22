@@ -1,4 +1,4 @@
-resource "aws_ecr_repository" "ecr" {
+resource "aws_ecr_repository" "ecr-app" {
   name                 = "app"
   image_tag_mutability = "MUTABLE"
 
@@ -7,7 +7,7 @@ resource "aws_ecr_repository" "ecr" {
   }
 }
 
-resource "aws_ecr_repository" "ecr" {
+resource "aws_ecr_repository" "ecr-db" {
   name                 = "db"
   image_tag_mutability = "MUTABLE"
 
