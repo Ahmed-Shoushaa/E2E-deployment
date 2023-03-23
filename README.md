@@ -30,7 +30,7 @@ pipeline as a code used to be triggered at each commit and create new docker ima
 ### bash.sh:
 Bash script used to get AWS credentials and automate creation or destruction of the  infrastructure
 
-## Usage
+# Usage
 You can either test the app locally or deploy it to EKS
 ### Test locally with Docker
 To test the app locally 
