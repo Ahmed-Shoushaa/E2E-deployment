@@ -96,4 +96,8 @@ From your GitHub repo settings add webhook with payload URL (jenkins_ip:8080/git
 </p>
 
 after these steps Jenkins pipeline will be triggered at each commit on GitHub repo
+# had an issue creating EKS node group on my account showing this error even there is no resources on my account to reach the maximum  
+![Screenshot 2023-03-24 151335](https://user-images.githubusercontent.com/117172376/227715633-a87f445d-9315-401d-afdd-908dfd70d346.png)
+![Screenshot 2023-03-24 151355](https://user-images.githubusercontent.com/117172376/227715634-7630507d-e514-4029-8893-51c201857c65.png)
+![Screenshot 2023-03-24 143536](https://user-images.githubusercontent.com/117172376/227715637-41751ac9-c8be-4ed0-a78a-c3a4dca41772.png)
 
