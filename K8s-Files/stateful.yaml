@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: db
-  #namespace: ingress-nginx
+  namespace: ingress-nginx
 spec:
   selector:
     app: mysql
@@ -17,7 +17,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: db
-  #namespace: ingress-nginx
+  namespace: ingress-nginx
 spec:
   serviceName: db
   replicas: 1
@@ -55,4 +55,4 @@ spec:
       resources:
         requests:
           storage: 1Gi
-      storageClassName: standard #for minikube
+      storageClassName: "" 
