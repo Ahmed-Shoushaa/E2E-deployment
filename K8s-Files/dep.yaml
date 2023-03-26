@@ -1,13 +1,8 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ingress-nginx
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webapp-deployment
-  #namespace: ingress-nginx
+  namespace: ingress-nginx
 spec:
   replicas: 1
   selector:
@@ -22,37 +17,18 @@ spec:
       - name: webapp
         image: shoushaa/flask-app
         ports:
-        - containerPort: 5000
-
-        resources:
-          limits:
-            cpu: 300m
-            memory: "100Mi"
-          requests:
-            cpu: 100m
-            memory: "50Mi"
-        
+        - containerPort: 5000      
         livenessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: 5000
           initialDelaySeconds: 15
           periodSeconds: 10    
-        
         readinessProbe:
-          httpGet:
-            path: /
+          tcpSocket:
             port: 5000
           initialDelaySeconds: 15
           periodSeconds: 10
-        
-        startupProbe:
-          httpGet:
-            path: /
-            port: 5000
-          failureThreshold: 30
-          periodSeconds: 10
-        
+                
         env:
         - name: MYSQL_DATABASE_PASSWORD
           value: "root"
@@ -61,11 +37,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: webapp-service
-  #namespace: ingress-nginx
+  namespace: ingress-nginx
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: webapp
   ports:
-  - port: 5000
+  - port: 80
     targetPort: 5000
